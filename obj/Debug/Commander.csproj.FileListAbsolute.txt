@@ -1,0 +1,9 @@
+c:\users\mamchenko.as\documents\visual studio 2013\Projects\Commander\Commander\bin\Debug\Commander.exe.config
+c:\users\mamchenko.as\documents\visual studio 2013\Projects\Commander\Commander\bin\Debug\Commander.exe
+c:\users\mamchenko.as\documents\visual studio 2013\Projects\Commander\Commander\bin\Debug\Commander.pdb
+c:\users\mamchenko.as\documents\visual studio 2013\Projects\Commander\Commander\obj\Debug\Commander.csprojResolveAssemblyReference.cache
+c:\users\mamchenko.as\documents\visual studio 2013\Projects\Commander\Commander\obj\Debug\Commander.Properties.Resources.resources
+c:\users\mamchenko.as\documents\visual studio 2013\Projects\Commander\Commander\obj\Debug\Commander.csproj.GenerateResource.Cache
+c:\users\mamchenko.as\documents\visual studio 2013\Projects\Commander\Commander\obj\Debug\Commander.exe
+c:\users\mamchenko.as\documents\visual studio 2013\Projects\Commander\Commander\obj\Debug\Commander.pdb
+C:\Users\Mamchenko.as\Documents\Visual Studio 2013\Projects\Commander\Commander\obj\Debug\Commander.FormMain.resources
