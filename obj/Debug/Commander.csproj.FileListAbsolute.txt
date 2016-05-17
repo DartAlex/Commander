@@ -7,3 +7,12 @@ c:\users\mamchenko.as\documents\visual studio 2013\Projects\Commander\Commander\
 c:\users\mamchenko.as\documents\visual studio 2013\Projects\Commander\Commander\obj\Debug\Commander.exe
 c:\users\mamchenko.as\documents\visual studio 2013\Projects\Commander\Commander\obj\Debug\Commander.pdb
 C:\Users\Mamchenko.as\Documents\Visual Studio 2013\Projects\Commander\Commander\obj\Debug\Commander.FormMain.resources
+C:\Users\DarthAlex\Documents\GitHub\Commander\bin\Debug\Commander.exe.config
+C:\Users\DarthAlex\Documents\GitHub\Commander\obj\Debug\Commander.exe
+C:\Users\DarthAlex\Documents\GitHub\Commander\obj\Debug\Commander.pdb
+C:\Users\DarthAlex\Documents\GitHub\Commander\bin\Debug\Commander.exe
+C:\Users\DarthAlex\Documents\GitHub\Commander\bin\Debug\Commander.pdb
+C:\Users\DarthAlex\Documents\GitHub\Commander\obj\Debug\Commander.csprojResolveAssemblyReference.cache
+C:\Users\DarthAlex\Documents\GitHub\Commander\obj\Debug\Commander.FormMain.resources
+C:\Users\DarthAlex\Documents\GitHub\Commander\obj\Debug\Commander.Properties.Resources.resources
+C:\Users\DarthAlex\Documents\GitHub\Commander\obj\Debug\Commander.csproj.GenerateResource.Cache
