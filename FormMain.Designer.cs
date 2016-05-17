@@ -33,8 +33,9 @@
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.panelDiskButton = new System.Windows.Forms.Panel();
             this.panelControlButton = new System.Windows.Forms.Panel();
+            this.tableLayoutPanelCommand = new System.Windows.Forms.TableLayoutPanel();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanelButton = new System.Windows.Forms.TableLayoutPanel();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.buttonF3View = new System.Windows.Forms.Button();
             this.buttonF4Edit = new System.Windows.Forms.Button();
             this.buttonF5Copy = new System.Windows.Forms.Button();
@@ -42,14 +43,13 @@
             this.buttonF7Directory = new System.Windows.Forms.Button();
             this.buttonF8Delete = new System.Windows.Forms.Button();
             this.buttonExit = new System.Windows.Forms.Button();
-            this.tableLayoutPanelCommand = new System.Windows.Forms.TableLayoutPanel();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.menuStrip.SuspendLayout();
             this.panelControlButton.SuspendLayout();
+            this.tableLayoutPanelCommand.SuspendLayout();
             this.tableLayoutPanelButton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.SuspendLayout();
-            this.tableLayoutPanelCommand.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -94,6 +94,29 @@
             this.panelControlButton.Size = new System.Drawing.Size(624, 49);
             this.panelControlButton.TabIndex = 5;
             // 
+            // tableLayoutPanelCommand
+            // 
+            this.tableLayoutPanelCommand.ColumnCount = 2;
+            this.tableLayoutPanelCommand.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanelCommand.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
+            this.tableLayoutPanelCommand.Controls.Add(this.comboBox1, 1, 0);
+            this.tableLayoutPanelCommand.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.tableLayoutPanelCommand.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanelCommand.Name = "tableLayoutPanelCommand";
+            this.tableLayoutPanelCommand.RowCount = 1;
+            this.tableLayoutPanelCommand.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelCommand.Size = new System.Drawing.Size(624, 26);
+            this.tableLayoutPanelCommand.TabIndex = 1;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(190, 3);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(431, 21);
+            this.comboBox1.TabIndex = 0;
+            // 
             // tableLayoutPanelButton
             // 
             this.tableLayoutPanelButton.ColumnCount = 7;
@@ -118,15 +141,6 @@
             this.tableLayoutPanelButton.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanelButton.Size = new System.Drawing.Size(624, 23);
             this.tableLayoutPanelButton.TabIndex = 0;
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 79);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Size = new System.Drawing.Size(624, 313);
-            this.splitContainer1.SplitterDistance = 310;
-            this.splitContainer1.TabIndex = 6;
             // 
             // buttonF3View
             // 
@@ -205,28 +219,14 @@
             this.buttonExit.Text = "Alt+F4 Выход";
             this.buttonExit.UseVisualStyleBackColor = true;
             // 
-            // tableLayoutPanelCommand
+            // splitContainer1
             // 
-            this.tableLayoutPanelCommand.ColumnCount = 2;
-            this.tableLayoutPanelCommand.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
-            this.tableLayoutPanelCommand.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelCommand.Controls.Add(this.comboBox1, 1, 0);
-            this.tableLayoutPanelCommand.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanelCommand.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanelCommand.Name = "tableLayoutPanelCommand";
-            this.tableLayoutPanelCommand.RowCount = 1;
-            this.tableLayoutPanelCommand.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelCommand.Size = new System.Drawing.Size(624, 26);
-            this.tableLayoutPanelCommand.TabIndex = 1;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(153, 3);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(468, 21);
-            this.comboBox1.TabIndex = 0;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 79);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Size = new System.Drawing.Size(624, 313);
+            this.splitContainer1.SplitterDistance = 310;
+            this.splitContainer1.TabIndex = 6;
             // 
             // FormMain
             // 
@@ -241,13 +241,14 @@
             this.MainMenuStrip = this.menuStrip;
             this.Name = "FormMain";
             this.Text = "FormMain";
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.panelControlButton.ResumeLayout(false);
+            this.tableLayoutPanelCommand.ResumeLayout(false);
             this.tableLayoutPanelButton.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.tableLayoutPanelCommand.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
