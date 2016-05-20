@@ -22,8 +22,7 @@ namespace Commander
         Panel panelSpaceDisk = new Panel();
         Panel panelDir = new Panel();
         Panel panelInfoFolder = new Panel();
-        ListView listViewDirectory = new ListView();
-        
+        CustomListView listViewDirectory = new CustomListView();     
 
         public void CreateInterface()
         {
@@ -89,11 +88,12 @@ namespace Commander
             listViewDirectory.Size = new Size(this.Width - 4, this.Height - 65);
             listViewDirectory.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
             listViewDirectory.View = View.Details;
+            listViewDirectory.OwnerDraw = true;
 
             listViewDirectory.Columns.Add("Имя", -2, HorizontalAlignment.Left);
             listViewDirectory.Columns.Add("Тип", -2, HorizontalAlignment.Left);
             listViewDirectory.Columns.Add("Размер", -2, HorizontalAlignment.Left);
-            listViewDirectory.Columns.Add("Дата", -2, HorizontalAlignment.Left);
+            listViewDirectory.Columns.Add("Дата", -2, HorizontalAlignment.Left);        
 
             this.Controls.Add(listViewDirectory);
 
