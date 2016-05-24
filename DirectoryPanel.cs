@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
 
 namespace Commander
 {
@@ -23,6 +24,8 @@ namespace Commander
         Panel panelDir = new Panel();
         Panel panelInfoFolder = new Panel();
         CustomListView listViewDirectory = new CustomListView();     
+        //ListView listViewDirectory = new ListView();
+        List<DirectoryList> directoryList = new List<DirectoryList>();
 
         public void CreateInterface()
         {
@@ -88,9 +91,9 @@ namespace Commander
             listViewDirectory.Size = new Size(this.Width - 4, this.Height - 65);
             listViewDirectory.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
             listViewDirectory.View = View.Details;
-            listViewDirectory.OwnerDraw = true;
+            //listViewDirectory.OwnerDraw = true;
 
-            listViewDirectory.Columns.Add("Имя", -2, HorizontalAlignment.Left);
+            listViewDirectory.Columns.Add("Имя", 200, HorizontalAlignment.Left);
             listViewDirectory.Columns.Add("Тип", -2, HorizontalAlignment.Left);
             listViewDirectory.Columns.Add("Размер", -2, HorizontalAlignment.Left);
             listViewDirectory.Columns.Add("Дата", -2, HorizontalAlignment.Left);        
@@ -108,6 +111,31 @@ namespace Commander
             labelInfoFolder.AutoSize = true;
             labelInfoFolder.Text = "Info folder";
             this.panelInfoFolder.Controls.Add(labelInfoFolder);
+        }
+
+        public void GetFiles(string directory)
+        {        
+            directoryList.Clear();
+
+            try
+            {
+                string[] dirs = Directory.GetDirectories(directory, "*");
+                foreach (string dir in dirs)
+                {
+                    //listViewDirectory.Items.Add(dir);
+                    string name = dir.Substring(dir.LastIndexOf('\\'));
+                    string type = "";
+                    string size = "<DIR>";
+                    //string date = 
+                    MessageBox.Show(dir + name);
+ 
+                }
+                
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
         }
     }
 }

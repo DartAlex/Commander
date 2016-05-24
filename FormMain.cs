@@ -25,10 +25,16 @@ namespace Commander
             leftDirectoryPanel.CreateInterface();
             splitContainer1.Panel1.Controls.Add(leftDirectoryPanel);
 
+            leftDirectoryPanel.GetFiles(@"C:\");
+            //var listViewItem = new ListViewItem(filesAndFolders);
+            //leftDirectoryPanel.
+
             DirectoryPanel rightDirectoryPanel = new DirectoryPanel();
             rightDirectoryPanel.Dock = DockStyle.Fill;
             rightDirectoryPanel.BorderStyle = BorderStyle.FixedSingle;
             splitContainer1.Panel2.Controls.Add(rightDirectoryPanel);
+
+
         }
     }
 }
