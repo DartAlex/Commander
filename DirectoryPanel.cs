@@ -96,7 +96,7 @@ namespace Commander
             listViewDirectory.Columns.Add("Имя", 200, HorizontalAlignment.Left);
             listViewDirectory.Columns.Add("Тип", -2, HorizontalAlignment.Left);
             listViewDirectory.Columns.Add("Размер", -2, HorizontalAlignment.Left);
-            listViewDirectory.Columns.Add("Дата", -2, HorizontalAlignment.Left);        
+            listViewDirectory.Columns.Add("Дата", 200, HorizontalAlignment.Left);        
 
             this.Controls.Add(listViewDirectory);
 
@@ -114,27 +114,79 @@ namespace Commander
         }
 
         public void GetFiles(string directory)
-        {        
+        {
+            IntPtr iconSmall;
+            SHFILEINFO shinfo = new SHFILEINFO();
+            
+            labelDir.Text = directory;
             directoryList.Clear();
 
+            DirectoryInfo thisDirectory = new DirectoryInfo(directory);
+
+            // Get folders
             try
-            {
-                string[] dirs = Directory.GetDirectories(directory, "*");
-                foreach (string dir in dirs)
+            {               
+                DirectoryInfo[] folders = thisDirectory.GetDirectories();
+                foreach (DirectoryInfo folder in folders)
                 {
-                    //listViewDirectory.Items.Add(dir);
-                    string name = dir.Substring(dir.LastIndexOf('\\'));
-                    string type = "";
-                    string size = "<DIR>";
-                    //string date = 
-                    MessageBox.Show(dir + name);
- 
-                }
-                
+                    iconSmall = Win32.SHGetFileInfo(folder.FullName, 0, ref shinfo, /*(uint)Marshal.SizeOf(shinfo)*/ 80, Win32.SHGFI_ICON | Win32.SHGFI_SMALLICON);
+                    Icon iconFolder = Icon.FromHandle(shinfo.hIcon);
+                    string dirFolder = folder.FullName;
+                    string nameFolder = folder.Name;
+                    string typeFolder = "";
+                    string sizeFolder = "<DIR>";
+                    DateTime dateFolder = Directory.GetCreationTime(dirFolder);
+
+                    directoryList.Add(new DirectoryList() { icon = iconFolder, directory = dirFolder, name = nameFolder, type = typeFolder, size = sizeFolder, date = dateFolder });
+                }               
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.ToString());
+            }
+
+            // Get files
+            try
+            {
+                FileInfo[] files = thisDirectory.GetFiles();
+                foreach (FileInfo file in files)
+                {
+                    iconSmall = Win32.SHGetFileInfo(file.FullName, 0, ref shinfo, /*(uint)Marshal.SizeOf(shinfo)*/ 80, Win32.SHGFI_ICON | Win32.SHGFI_SMALLICON);
+                    Icon iconFile = Icon.FromHandle(shinfo.hIcon);
+                    string dirFile = file.FullName;
+                    string nameFile = file.Name.Split('.')[0];
+                    string typeFile = "";
+                    try
+                    {
+                        typeFile = file.Name.Split('.')[1];
+                    }
+                    catch { }                   
+                    string sizeFile = file.Length.ToString();
+                    DateTime dateFile = File.GetCreationTime(dirFile);
+
+                    directoryList.Add(new DirectoryList() { icon = iconFile, directory = dirFile, name = nameFile, type = typeFile, size = sizeFile, date = dateFile });
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
+
+            // Adding in ListView
+            ImageList iconList = new ImageList();
+            iconList.ColorDepth = ColorDepth.Depth32Bit;
+            listViewDirectory.SmallImageList = iconList;
+            listViewDirectory.LargeImageList = iconList;
+            int count = 0;
+
+            foreach (DirectoryList lineDirectoryList in directoryList)
+            {
+                string[] item = { lineDirectoryList.name, lineDirectoryList.type, lineDirectoryList.size, lineDirectoryList.date.ToString().Split(' ')[0] };
+                ListViewItem listItem = new ListViewItem(item);
+                listItem.ImageIndex = count;
+                iconList.Images.Add(lineDirectoryList.icon);
+                listViewDirectory.Items.Add(listItem);
+                count++;
             }
         }
     }
