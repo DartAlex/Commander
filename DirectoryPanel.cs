@@ -26,6 +26,7 @@ namespace Commander
         CustomListView listViewDirectory = new CustomListView();     
         //ListView listViewDirectory = new ListView();
         List<DirectoryList> directoryList = new List<DirectoryList>();
+        int selectionIndex;
 
         public void CreateInterface()
         {
@@ -91,12 +92,16 @@ namespace Commander
             listViewDirectory.Size = new Size(this.Width - 4, this.Height - 65);
             listViewDirectory.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
             listViewDirectory.View = View.Details;
+            listViewDirectory.FullRowSelect = true;
             //listViewDirectory.OwnerDraw = true;
+
+            listViewDirectory.ItemSelectionChanged += ListViewDirectory_ItemSelectionChanged;
+            listViewDirectory.MouseDoubleClick += ListViewDirectory_MouseDoubleClick;
 
             listViewDirectory.Columns.Add("Имя", 200, HorizontalAlignment.Left);
             listViewDirectory.Columns.Add("Тип", -2, HorizontalAlignment.Left);
-            listViewDirectory.Columns.Add("Размер", -2, HorizontalAlignment.Left);
-            listViewDirectory.Columns.Add("Дата", 200, HorizontalAlignment.Left);        
+            listViewDirectory.Columns.Add("Размер", 70, HorizontalAlignment.Left);
+            listViewDirectory.Columns.Add("Дата", 120, HorizontalAlignment.Left);        
 
             this.Controls.Add(listViewDirectory);
 
@@ -113,15 +118,64 @@ namespace Commander
             this.panelInfoFolder.Controls.Add(labelInfoFolder);
         }
 
+        private void ListViewDirectory_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            //throw new NotImplementedException();
+            //MessageBox.Show(directoryList[e.Item.Index].name);
+            selectionIndex = e.Item.Index;
+        }
+
+        private void ListViewDirectory_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            //throw new NotImplementedException();
+            OpenSelected(selectionIndex);                   
+        }
+
+        // Open selected item ListView
+        private void OpenSelected(int Index)
+        {
+            if (directoryList[selectionIndex].isFile == true)
+            {
+                if (directoryList[selectionIndex].type != "")
+                {
+                    MessageBox.Show("file " + directoryList[selectionIndex].name + "." + directoryList[selectionIndex].type);
+                }
+                else
+                {
+                    MessageBox.Show("file " + directoryList[selectionIndex].name);
+                }              
+            }
+            else
+            {
+                GetFiles(directoryList[selectionIndex].directory + "\\");
+            }
+        }
+
         public void GetFiles(string directory)
         {
             IntPtr iconSmall;
             SHFILEINFO shinfo = new SHFILEINFO();
             
-            labelDir.Text = directory;
             directoryList.Clear();
+            listViewDirectory.Items.Clear();           
 
             DirectoryInfo thisDirectory = new DirectoryInfo(directory);
+
+            // if root
+            string rootDir = thisDirectory.Root.ToString();
+            string currentDir = thisDirectory.FullName.ToString();
+
+            labelDir.Text = currentDir;
+
+            if (rootDir != currentDir)
+            {              
+                string dirFolder = Directory.GetParent(Directory.GetParent(directory).ToString()).ToString();
+                iconSmall = Win32.SHGetFileInfo(dirFolder, 0, ref shinfo, /*(uint)Marshal.SizeOf(shinfo)*/ 80, Win32.SHGFI_ICON | Win32.SHGFI_SMALLICON);
+                Icon iconFolder = Icon.FromHandle(shinfo.hIcon);
+                DateTime dateFolder = Directory.GetCreationTime(dirFolder);
+
+                directoryList.Add(new DirectoryList() { isFile = false, icon = iconFolder, directory = dirFolder, name = "[..]", type = "", size = "", date = dateFolder });
+            }
 
             // Get folders
             try
@@ -132,12 +186,12 @@ namespace Commander
                     iconSmall = Win32.SHGetFileInfo(folder.FullName, 0, ref shinfo, /*(uint)Marshal.SizeOf(shinfo)*/ 80, Win32.SHGFI_ICON | Win32.SHGFI_SMALLICON);
                     Icon iconFolder = Icon.FromHandle(shinfo.hIcon);
                     string dirFolder = folder.FullName;
-                    string nameFolder = folder.Name;
+                    string nameFolder = "[" + folder.Name + "]";
                     string typeFolder = "";
-                    string sizeFolder = "<DIR>";
+                    string sizeFolder = "<папка>";
                     DateTime dateFolder = Directory.GetCreationTime(dirFolder);
 
-                    directoryList.Add(new DirectoryList() { icon = iconFolder, directory = dirFolder, name = nameFolder, type = typeFolder, size = sizeFolder, date = dateFolder });
+                    directoryList.Add(new DirectoryList() { isFile = false, icon = iconFolder, directory = dirFolder, name = nameFolder, type = typeFolder, size = sizeFolder, date = dateFolder });
                 }               
             }
             catch (Exception e)
@@ -154,17 +208,17 @@ namespace Commander
                     iconSmall = Win32.SHGetFileInfo(file.FullName, 0, ref shinfo, /*(uint)Marshal.SizeOf(shinfo)*/ 80, Win32.SHGFI_ICON | Win32.SHGFI_SMALLICON);
                     Icon iconFile = Icon.FromHandle(shinfo.hIcon);
                     string dirFile = file.FullName;
-                    string nameFile = file.Name.Split('.')[0];
-                    string typeFile = "";
+                    string nameFile = Path.GetFileNameWithoutExtension(dirFile);
+                    string typeFile = Path.GetExtension(dirFile);
                     try
                     {
-                        typeFile = file.Name.Split('.')[1];
+                        typeFile = typeFile.Substring(1);
                     }
-                    catch { }                   
+                    catch { }
                     string sizeFile = file.Length.ToString();
                     DateTime dateFile = File.GetCreationTime(dirFile);
 
-                    directoryList.Add(new DirectoryList() { icon = iconFile, directory = dirFile, name = nameFile, type = typeFile, size = sizeFile, date = dateFile });
+                    directoryList.Add(new DirectoryList() { isFile = true, icon = iconFile, directory = dirFile, name = nameFile, type = typeFile, size = sizeFile, date = dateFile });
                 }
             }
             catch (Exception e)
@@ -177,11 +231,11 @@ namespace Commander
             iconList.ColorDepth = ColorDepth.Depth32Bit;
             listViewDirectory.SmallImageList = iconList;
             listViewDirectory.LargeImageList = iconList;
-            int count = 0;
+            int count = 0;          
 
             foreach (DirectoryList lineDirectoryList in directoryList)
             {
-                string[] item = { lineDirectoryList.name, lineDirectoryList.type, lineDirectoryList.size, lineDirectoryList.date.ToString().Split(' ')[0] };
+                string[] item = { lineDirectoryList.name, lineDirectoryList.type, lineDirectoryList.size, lineDirectoryList.date.ToString("dd.MM.yyyy HH.mm.ss") };
                 ListViewItem listItem = new ListViewItem(item);
                 listItem.ImageIndex = count;
                 iconList.Images.Add(lineDirectoryList.icon);
