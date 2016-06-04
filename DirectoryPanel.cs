@@ -35,6 +35,8 @@ namespace Commander
         int selectionIndex;
         string dateTimeFormat = "dd.MM.yyyy HH.mm.ss";
 
+        public string SaveDir { get; set; }
+
         protected override void CreateHandle()
         {
             CreateInterface();

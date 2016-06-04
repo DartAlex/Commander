@@ -44,6 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ButtonDrive.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CustomListView.cs">
       <SubType>Component</SubType>
     </Compile>

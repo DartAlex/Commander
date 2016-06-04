@@ -43,15 +43,19 @@
             this.buttonF7Directory = new System.Windows.Forms.Button();
             this.buttonF8Delete = new System.Windows.Forms.Button();
             this.buttonExit = new System.Windows.Forms.Button();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.panelDiskButton = new System.Windows.Forms.Panel();
+            this.splitContainerButtonsDisk = new System.Windows.Forms.SplitContainer();
             this.menuStrip.SuspendLayout();
             this.panelControlButton.SuspendLayout();
             this.tableLayoutPanelCommand.SuspendLayout();
             this.tableLayoutPanelButton.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
+            this.splitContainer.SuspendLayout();
+            this.panelDiskButton.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerButtonsDisk)).BeginInit();
+            this.splitContainerButtonsDisk.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -213,14 +217,14 @@
             this.buttonExit.Text = "Alt+F4 Выход";
             this.buttonExit.UseVisualStyleBackColor = true;
             // 
-            // splitContainer1
+            // splitContainer
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 79);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Size = new System.Drawing.Size(624, 313);
-            this.splitContainer1.SplitterDistance = 310;
-            this.splitContainer1.TabIndex = 6;
+            this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer.Location = new System.Drawing.Point(0, 79);
+            this.splitContainer.Name = "splitContainer";
+            this.splitContainer.Size = new System.Drawing.Size(624, 313);
+            this.splitContainer.SplitterDistance = 311;
+            this.splitContainer.TabIndex = 6;
             // 
             // notifyIcon1
             // 
@@ -230,18 +234,29 @@
             // panelDiskButton
             // 
             this.panelDiskButton.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelDiskButton.Controls.Add(this.splitContainerButtonsDisk);
             this.panelDiskButton.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelDiskButton.Location = new System.Drawing.Point(0, 49);
             this.panelDiskButton.Name = "panelDiskButton";
             this.panelDiskButton.Size = new System.Drawing.Size(624, 30);
             this.panelDiskButton.TabIndex = 2;
             // 
+            // splitContainerButtonsDisk
+            // 
+            this.splitContainerButtonsDisk.Cursor = System.Windows.Forms.Cursors.Default;
+            this.splitContainerButtonsDisk.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerButtonsDisk.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerButtonsDisk.Name = "splitContainerButtonsDisk";
+            this.splitContainerButtonsDisk.Size = new System.Drawing.Size(622, 28);
+            this.splitContainerButtonsDisk.SplitterDistance = 310;
+            this.splitContainerButtonsDisk.TabIndex = 0;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 441);
-            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.panelControlButton);
             this.Controls.Add(this.panelDiskButton);
             this.Controls.Add(this.toolStrip);
@@ -255,8 +270,11 @@
             this.panelControlButton.ResumeLayout(false);
             this.tableLayoutPanelCommand.ResumeLayout(false);
             this.tableLayoutPanelButton.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
+            this.splitContainer.ResumeLayout(false);
+            this.panelDiskButton.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerButtonsDisk)).EndInit();
+            this.splitContainerButtonsDisk.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -269,7 +287,7 @@
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.Panel panelControlButton;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelButton;
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.Button buttonF3View;
         private System.Windows.Forms.Button buttonF4Edit;
         private System.Windows.Forms.Button buttonF5Copy;
@@ -281,6 +299,7 @@
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.Panel panelDiskButton;
+        private System.Windows.Forms.SplitContainer splitContainerButtonsDisk;
     }
 }
 
