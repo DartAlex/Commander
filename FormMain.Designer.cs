@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.panelDiskButton = new System.Windows.Forms.Panel();
             this.panelControlButton = new System.Windows.Forms.Panel();
             this.tableLayoutPanelCommand = new System.Windows.Forms.TableLayoutPanel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
@@ -44,6 +44,8 @@
             this.buttonF8Delete = new System.Windows.Forms.Button();
             this.buttonExit = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.panelDiskButton = new System.Windows.Forms.Panel();
             this.menuStrip.SuspendLayout();
             this.panelControlButton.SuspendLayout();
             this.tableLayoutPanelCommand.SuspendLayout();
@@ -75,14 +77,6 @@
             this.toolStrip.Size = new System.Drawing.Size(624, 25);
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip";
-            // 
-            // panelDiskButton
-            // 
-            this.panelDiskButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelDiskButton.Location = new System.Drawing.Point(0, 49);
-            this.panelDiskButton.Name = "panelDiskButton";
-            this.panelDiskButton.Size = new System.Drawing.Size(624, 30);
-            this.panelDiskButton.TabIndex = 2;
             // 
             // panelControlButton
             // 
@@ -228,6 +222,20 @@
             this.splitContainer1.SplitterDistance = 310;
             this.splitContainer1.TabIndex = 6;
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Visible = true;
+            // 
+            // panelDiskButton
+            // 
+            this.panelDiskButton.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelDiskButton.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelDiskButton.Location = new System.Drawing.Point(0, 49);
+            this.panelDiskButton.Name = "panelDiskButton";
+            this.panelDiskButton.Size = new System.Drawing.Size(624, 30);
+            this.panelDiskButton.TabIndex = 2;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -259,7 +267,6 @@
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
         private System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.Panel panelDiskButton;
         private System.Windows.Forms.Panel panelControlButton;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelButton;
         private System.Windows.Forms.SplitContainer splitContainer1;
@@ -272,6 +279,8 @@
         private System.Windows.Forms.Button buttonExit;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelCommand;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.Panel panelDiskButton;
     }
 }
 
