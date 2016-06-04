@@ -63,6 +63,9 @@
     <Compile Include="HeaderListView.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SplitContainerButtonsDisk.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Win32.cs" />
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>

@@ -10,6 +10,5 @@ namespace Commander
     class ButtonDrive: Button
     {
         public string Directory { get; set; }
-        public int Numer { get; set; }
     }
 }
