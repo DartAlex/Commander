@@ -82,6 +82,6 @@ namespace Commander
             //throw new NotImplementedException();
             string dir = (((ButtonDrive)sender).Directory.ToString());
             FormMain.EventSend.SendToLeftPanel(dir);
-        }
+        }        
     }
 }

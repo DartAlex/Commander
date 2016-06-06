@@ -32,6 +32,8 @@ namespace Commander
 
         int selectionIndex;
         string dateTimeFormat = "dd.MM.yyyy HH:mm:ss";
+        string rootDir;
+        string currentDir;
 
         protected override void CreateHandle()
         {
@@ -185,8 +187,8 @@ namespace Commander
             DirectoryInfo thisDirectory = new DirectoryInfo(directory);
 
             // if root
-            string rootDir = thisDirectory.Root.ToString();
-            string currentDir = thisDirectory.FullName.ToString();         
+            rootDir = thisDirectory.Root.ToString();
+            currentDir = thisDirectory.FullName.ToString();         
 
             if (rootDir != currentDir)
             {
@@ -270,14 +272,22 @@ namespace Commander
             // Tread add icon
             Thread iconFileThread = new Thread(SetIcon);
             iconFileThread.Start();
+
+            // Tread DriveInfo
+            Thread dirveInfoThread = new Thread(GetDriveInfo);
+            dirveInfoThread.Start();
+
+            // Tread InfoFolder
+            Thread folderInfoThread = new Thread(GetFolderInfo);
+            folderInfoThread.Start();
         }
 
         // Add icon
-        public void AddListViewDirectory(ImageList value)
+        public void AddIconListViewDirectory(ImageList value)
         {
             if (InvokeRequired)
             {
-                this.Invoke(new Action<ImageList>(AddListViewDirectory), new object[] { value });
+                this.Invoke(new Action<ImageList>(AddIconListViewDirectory), new object[] { value });
                 return;
             }
             listViewDirectory.SmallImageList = value;
@@ -286,8 +296,7 @@ namespace Commander
                 listViewDirectory.Items[count].ImageIndex = count;
             }
         }
-
-        // Tread add icon
+        // Tread
         private void SetIcon()
         {
             ImageList iconList = new ImageList();
@@ -296,7 +305,76 @@ namespace Commander
             {
                 iconList.Images.Add(lineDirectoryList.icon);
             }
-            AddListViewDirectory(iconList);
+            AddIconListViewDirectory(iconList);
+        }
+
+        // Drive info to label
+        public void DriveInfoToLabel(string value)
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action<string>(DriveInfoToLabel), new object[] { value });
+                return;
+            }
+            labelFreeSpace.Text = value;
+        }
+        // Tread
+        private void GetDriveInfo()
+        {
+            DriveInfo driveInfo = new DriveInfo(rootDir);
+
+            string driveName = driveInfo.VolumeLabel;
+            if (driveName.Length == 0)
+            {
+                driveName = "-нет-";
+            }
+            string driveFreeSpace = driveInfo.TotalFreeSpace.ToString();
+            string driveTotalSpace = driveInfo.TotalSize.ToString();
+            DriveInfoToLabel("["+ driveName+"] " + driveFreeSpace + "  из " + driveTotalSpace);
+        }
+
+        // Folder info to label
+        private void FileInfoToLabel(string value)
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action<string>(FileInfoToLabel), new object[] { value });
+                return;
+            }
+            labelInfoFolder.Text = value;
+        }
+        // Thread
+        private void GetFolderInfo()
+        {
+            DirectoryInfo directoryInfo = new DirectoryInfo(currentDir);
+
+            long sizeSelectedItem = 0;
+            long sizeAllItem = DirSize(directoryInfo);
+
+            int countSelectedFiles = 0;
+            int countAllFiles = directoryInfo.GetFiles().Length;
+
+            int countSelectedFolders = 0;
+            int countAllFolders = directoryInfo.GetDirectories().Length;
+
+            FileInfoToLabel(sizeSelectedItem.ToString() + " из " + sizeAllItem + "; файлов: " + countSelectedFiles + " из " + countAllFiles + "; папок: " + countSelectedFolders + " из " + countAllFolders);
+        }
+
+        public static long DirSize(DirectoryInfo d)
+        {
+            long size = 0;
+            // Add file sizes.
+            try
+            {
+                FileInfo[] fis = d.GetFiles();
+                foreach (FileInfo fi in fis)
+                {
+                    size += fi.Length;
+                }
+            }
+            catch { }
+            
+            return size;
         }
     }
 }
