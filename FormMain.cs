@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Text;
+using System.Linq;
 using System.Windows.Forms;
-
 
 namespace Commander
 {
@@ -23,14 +23,48 @@ namespace Commander
         DirectoryPanel leftDirectoryPanel = new DirectoryPanel();
         DirectoryPanel rightDirectoryPanel = new DirectoryPanel();
 
+        List<CurrentDirectory> listCurentDirectory = new List<CurrentDirectory>();
+
+        // Сохранить текущую директорию диска
+        public void SendCurrrentDirectory(string root, string currentDirectory)
+        {
+            int index = listCurentDirectory.IndexOf(listCurentDirectory.Where(d => d.Root == root).FirstOrDefault());
+            if (index == -1)
+            {
+                listCurentDirectory.Add(new CurrentDirectory { Root = root, Directory = currentDirectory });
+            }
+            else
+            {
+                listCurentDirectory[index].Directory = currentDirectory;
+            }
+            
+        }
+        // Переход на диск левая панель
         public void SendToLeftPanel(string value)
         {
-            leftDirectoryPanel.GetFoldersFiles(value);
+            int index = listCurentDirectory.IndexOf(listCurentDirectory.Where(d => d.Root == value).FirstOrDefault());
+            if (index == -1)
+            {
+                leftDirectoryPanel.GetFoldersFiles(value);
+            }
+            else
+            {
+                leftDirectoryPanel.GetFoldersFiles(listCurentDirectory[index].Directory);
+            }
+            
         }
-
+        // Переход на диск правая панель
         public void SendToRightPanel(string value)
         {
-            leftDirectoryPanel.GetFoldersFiles(value);
+            int index = listCurentDirectory.IndexOf(listCurentDirectory.Where(d => d.Root == value).FirstOrDefault());
+            if (index == -1)
+            {
+                rightDirectoryPanel.GetFoldersFiles(value);
+            }
+            else
+            {
+                rightDirectoryPanel.GetFoldersFiles(listCurentDirectory[index].Directory);
+            }
         }
 
         private void FormMain_Load(object sender, EventArgs e)

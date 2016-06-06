@@ -47,6 +47,7 @@
     <Compile Include="ButtonDrive.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CurrentDirectory.cs" />
     <Compile Include="CustomListView.cs">
       <SubType>Component</SubType>
     </Compile>

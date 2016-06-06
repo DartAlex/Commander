@@ -25,17 +25,13 @@ namespace Commander
         Panel panelDir = new Panel();
         Panel panelInfoFolder = new Panel();
         CustomListView listViewDirectory = new CustomListView();     
-        //ListView listViewDirectory = new ListView();
         List<DirectoryList> directoryList = new List<DirectoryList>();
-
-        //ImageList iconList = new ImageList();
+        List<DirectoryList> tempDirectoryList = new List<DirectoryList>();
         Icon iconUp = Properties.Resources.IconUP;
-        Icon IconUnknown = Properties.Resources.IconUnknown;
+        Icon IconUnknown = Properties.Resources.IconUnknown;       
 
         int selectionIndex;
-        string dateTimeFormat = "dd.MM.yyyy HH.mm.ss";
-
-        public string SaveDir { get; set; }
+        string dateTimeFormat = "dd.MM.yyyy HH:mm:ss";
 
         protected override void CreateHandle()
         {
@@ -183,24 +179,21 @@ namespace Commander
         }
 
         public void GetFoldersFiles(string directory)
-        {           
-            directoryList.Clear();
-            listViewDirectory.Items.Clear();           
-
+        {
+            tempDirectoryList.Clear();
+            
             DirectoryInfo thisDirectory = new DirectoryInfo(directory);
 
             // if root
             string rootDir = thisDirectory.Root.ToString();
-            string currentDir = thisDirectory.FullName.ToString();
-
-            labelDir.Text = currentDir;
+            string currentDir = thisDirectory.FullName.ToString();         
 
             if (rootDir != currentDir)
-            {              
-                string dirFolder = Directory.GetParent(Directory.GetParent(directory).ToString()).ToString();                            
+            {
+                string dirFolder = Directory.GetParent(Directory.GetParent(directory).ToString()).ToString();
                 DateTime dateFolder = Directory.GetCreationTime(dirFolder);
 
-                directoryList.Add(new DirectoryList()
+                tempDirectoryList.Add(new DirectoryList()
                 {
                     icon = /*iconFolder*/ iconUp,
                     directory = dirFolder,
@@ -211,15 +204,15 @@ namespace Commander
                     atrributes = thisDirectory.Attributes
                 });
             }
-
-            // Get folders
+            
             try
-            {               
+            {
+                // Get folders
                 DirectoryInfo[] folders = thisDirectory.GetDirectories();
                 foreach (DirectoryInfo folder in folders)
-                {                    
-                    string dirFolder = folder.FullName;                 
-                    directoryList.Add(new DirectoryList()
+                {
+                    string dirFolder = folder.FullName;
+                    tempDirectoryList.Add(new DirectoryList()
                     {
                         icon = GetIcon(dirFolder),
                         directory = dirFolder,
@@ -229,19 +222,11 @@ namespace Commander
                         date = Directory.GetCreationTime(dirFolder),
                         atrributes = folder.Attributes
                     });
-                }               
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Открытие папки " + e.ToString());
-            }
-
-            // Get files
-            try
-            {
+                }
+                // Get folders
                 FileInfo[] files = thisDirectory.GetFiles();
                 foreach (FileInfo file in files)
-                {               
+                {
                     string dirFile = file.FullName;
                     string typeFile = Path.GetExtension(dirFile);
                     try
@@ -249,7 +234,7 @@ namespace Commander
                         typeFile = typeFile.Substring(1);
                     }
                     catch { }
-                    directoryList.Add(new DirectoryList()
+                    tempDirectoryList.Add(new DirectoryList()
                     {
                         icon = GetIcon(dirFile),
                         directory = dirFile,
@@ -263,10 +248,18 @@ namespace Commander
             }
             catch (Exception e)
             {
-                MessageBox.Show("Открытие файла " + e.ToString());
+                MessageBox.Show(e.ToString());
+                return;
             }
 
+            // Set current dir label
+            labelDir.Text = currentDir;
+
             // Adding in ListView
+            directoryList.Clear();
+            directoryList = new List<DirectoryList>(tempDirectoryList);
+            listViewDirectory.Items.Clear();
+
             foreach (DirectoryList lineDirectoryList in directoryList)
             {
                 string[] item = { lineDirectoryList.name, lineDirectoryList.type, lineDirectoryList.size, lineDirectoryList.date.ToString(dateTimeFormat) };
