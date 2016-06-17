@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
 using System.Threading;
+using System.Globalization;
 
 namespace Commander
 {
@@ -112,7 +113,7 @@ namespace Commander
 
             listViewDirectory.Columns.Add("Имя", 200, HorizontalAlignment.Left);
             listViewDirectory.Columns.Add("Тип", 50, HorizontalAlignment.Left);
-            listViewDirectory.Columns.Add("Размер", 70, HorizontalAlignment.Left);
+            listViewDirectory.Columns.Add("Размер", 70, HorizontalAlignment.Right);
             listViewDirectory.Columns.Add("Дата", 120, HorizontalAlignment.Left);        
 
             this.Controls.Add(listViewDirectory);
@@ -242,7 +243,8 @@ namespace Commander
                         directory = dirFile,
                         name = Path.GetFileNameWithoutExtension(dirFile),
                         type = typeFile,
-                        size = file.Length.ToString(),
+                        //size = file.Length.ToString(),
+                        size = NumberFormat.DigitNumber(file.Length),
                         date = File.GetCreationTime(dirFile),
                         atrributes = file.Attributes
                     });
@@ -328,8 +330,8 @@ namespace Commander
             {
                 driveName = "-нет-";
             }
-            string driveFreeSpace = driveInfo.TotalFreeSpace.ToString();
-            string driveTotalSpace = driveInfo.TotalSize.ToString();
+            string driveFreeSpace = NumberFormat.DigitNumber(driveInfo.TotalFreeSpace);
+            string driveTotalSpace = NumberFormat.DigitNumber(driveInfo.TotalSize);
             DriveInfoToLabel("["+ driveName+"] " + driveFreeSpace + "  из " + driveTotalSpace);
         }
 
@@ -357,7 +359,7 @@ namespace Commander
             int countSelectedFolders = 0;
             int countAllFolders = directoryInfo.GetDirectories().Length;
 
-            FileInfoToLabel(sizeSelectedItem.ToString() + " из " + sizeAllItem + "; файлов: " + countSelectedFiles + " из " + countAllFiles + "; папок: " + countSelectedFolders + " из " + countAllFolders);
+            FileInfoToLabel(NumberFormat.DigitNumber(sizeSelectedItem) + " из " + NumberFormat.DigitNumber(sizeAllItem) + "; файлов: " + countSelectedFiles + " из " + countAllFiles + "; папок: " + countSelectedFolders + " из " + countAllFolders);
         }
 
         public static long DirSize(DirectoryInfo d)

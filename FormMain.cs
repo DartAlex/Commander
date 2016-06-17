@@ -83,5 +83,11 @@ namespace Commander
             splitContainer.Panel2.Controls.Add(rightDirectoryPanel);
             rightDirectoryPanel.GetFoldersFiles(@"D:\");
         }
+
+        // Exit
+        private void buttonExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

@@ -212,6 +212,7 @@
             this.buttonExit.TabIndex = 6;
             this.buttonExit.Text = "Alt+F4 Выход";
             this.buttonExit.UseVisualStyleBackColor = true;
+            this.buttonExit.Click += new System.EventHandler(this.buttonExit_Click);
             // 
             // splitContainer
             // 
