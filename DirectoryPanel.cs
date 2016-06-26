@@ -29,7 +29,7 @@ namespace Commander
         List<DirectoryList> directoryList = new List<DirectoryList>();
         List<DirectoryList> tempDirectoryList = new List<DirectoryList>();
         Icon iconUp = Properties.Resources.IconUP;
-        Icon IconUnknown = Properties.Resources.IconUnknown;       
+        Icon IconUnknown = Properties.Resources.IconUnknown;   
 
         int selectionIndex;
         string dateTimeFormat = "dd.MM.yyyy HH:mm:ss";
@@ -38,6 +38,9 @@ namespace Commander
 
         protected override void CreateHandle()
         {
+            this.Dock = DockStyle.Fill;
+            this.BorderStyle = BorderStyle.FixedSingle;
+
             CreateInterface();
             base.CreateHandle();
         }
@@ -47,6 +50,7 @@ namespace Commander
             comboBoxDrive.Location = new Point(2, 2);
             comboBoxDrive.Size = new Size(42, 21);
             comboBoxDrive.Text = "[-c-]";
+            comboBoxDrive.TabIndex = 2;
             this.Controls.Add(comboBoxDrive);
 
             buttonToRoot.Location = new Point(this.Width - 43, 1);
@@ -54,6 +58,7 @@ namespace Commander
             buttonToRoot.Anchor = AnchorStyles.None;
             buttonToRoot.Anchor = (AnchorStyles.Top | AnchorStyles.Right);
             buttonToRoot.Text = "/";
+            buttonToRoot.TabIndex = 3;
             this.Controls.Add(buttonToRoot);
 
             buttonToParent.Location = new Point(this.Width - 22, 1);
@@ -61,6 +66,7 @@ namespace Commander
             buttonToParent.Anchor = AnchorStyles.None;
             buttonToParent.Anchor = (AnchorStyles.Top | AnchorStyles.Right);
             buttonToParent.Text = "..";
+            buttonToParent.TabIndex = 4;
             this.Controls.Add(buttonToParent);
 
             panelSpaceDisk.Location = new Point(46, 2);
@@ -68,11 +74,13 @@ namespace Commander
             panelSpaceDisk.Anchor = AnchorStyles.None;
             panelSpaceDisk.Anchor = (AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
             panelSpaceDisk.BorderStyle = BorderStyle.FixedSingle;
+            panelSpaceDisk.TabIndex = 5;
             this.Controls.Add(panelSpaceDisk);
 
             labelFreeSpace.Location = new Point(0, 3);
             labelFreeSpace.AutoSize = true;
             labelFreeSpace.Text = "Free space disck";
+            labelFreeSpace.TabIndex = 6;
             this.panelSpaceDisk.Controls.Add(labelFreeSpace);
 
             buttonFavoriteCatalogs.Location = new Point(this.Width - 43, 24);
@@ -80,6 +88,7 @@ namespace Commander
             buttonFavoriteCatalogs.Anchor = AnchorStyles.None;
             buttonFavoriteCatalogs.Anchor = (AnchorStyles.Top | AnchorStyles.Right);
             buttonFavoriteCatalogs.Text = "*"; //1F7C9 u1F7CA
+            buttonFavoriteCatalogs.TabIndex = 7;
             this.Controls.Add(buttonFavoriteCatalogs);
 
             buttonHistory.Location = new Point(this.Width - 22, 24);
@@ -87,6 +96,7 @@ namespace Commander
             buttonHistory.Anchor = AnchorStyles.None;
             buttonHistory.Anchor = (AnchorStyles.Top | AnchorStyles.Right);
             buttonHistory.Text = "H";
+            buttonHistory.TabIndex = 8;
             this.Controls.Add(buttonHistory);
 
             panelDir.Location = new Point(2, 25);
@@ -94,29 +104,29 @@ namespace Commander
             panelDir.Anchor = AnchorStyles.None;
             panelDir.Anchor = (AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
             panelDir.BorderStyle = BorderStyle.FixedSingle;
+            panelDir.TabIndex = 9;
             this.Controls.Add(panelDir);
 
             labelDir.Location = new Point(0, 0);
             labelDir.AutoSize = true;
             labelDir.Text = "DirDirectory";
+            labelDir.TabIndex = 10;
             this.panelDir.Controls.Add(labelDir);
 
             listViewDirectory.Location = new Point(2, 42);
-            listViewDirectory.Size = new Size(this.Width - 4, this.Height - 65);
-            listViewDirectory.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
-            listViewDirectory.View = View.Details;
-            listViewDirectory.FullRowSelect = true;
-            //listViewDirectory.OwnerDraw = true;
+            listViewDirectory.Size = new Size(this.Width - 4, this.Height - 65);                                
 
             listViewDirectory.ItemSelectionChanged += ListViewDirectory_ItemSelectionChanged;
             listViewDirectory.MouseDoubleClick += ListViewDirectory_MouseDoubleClick;
 
             listViewDirectory.Columns.Add("Имя", 200, HorizontalAlignment.Left);
             listViewDirectory.Columns.Add("Тип", 50, HorizontalAlignment.Left);
-            listViewDirectory.Columns.Add("Размер", 70, HorizontalAlignment.Right);
-            listViewDirectory.Columns.Add("Дата", 120, HorizontalAlignment.Left);        
+            listViewDirectory.Columns.Add("Размер", 100, HorizontalAlignment.Right);
+            listViewDirectory.Columns.Add("Дата", 120, HorizontalAlignment.Left);
 
-            this.Controls.Add(listViewDirectory);
+
+            listViewDirectory.TabIndex = 1;
+            this.Controls.Add(listViewDirectory);          
 
             panelInfoFolder.Location = new Point(2, this.Height - 22);
             panelInfoFolder.Size = new Size(this.Width - 4, 21);
@@ -128,6 +138,7 @@ namespace Commander
             labelInfoFolder.Location = new Point(0, 3);
             labelInfoFolder.AutoSize = true;
             labelInfoFolder.Text = "Info folder";
+            
             this.panelInfoFolder.Controls.Add(labelInfoFolder);
         }
 
@@ -141,7 +152,7 @@ namespace Commander
         {
             //throw new NotImplementedException();
             OpenSelected(selectionIndex);                   
-        }        
+        } 
 
         private Icon GetIcon(string filePatch)
         {
@@ -282,6 +293,7 @@ namespace Commander
             // Tread InfoFolder
             Thread folderInfoThread = new Thread(GetFolderInfo);
             folderInfoThread.Start();
+
         }
 
         // Add icon
@@ -378,5 +390,7 @@ namespace Commander
             
             return size;
         }
+
+        // Focus
     }
 }

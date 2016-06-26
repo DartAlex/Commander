@@ -72,16 +72,16 @@ namespace Commander
             panelDiskButton.Controls.Add(buttonContainer);
             buttonContainer.SplitterDistance = 310;
             buttonContainer.IsSplitterFixed = true;
-
-            leftDirectoryPanel.Dock = DockStyle.Fill;
-            leftDirectoryPanel.BorderStyle = BorderStyle.FixedSingle;
+          
             splitContainer.Panel1.Controls.Add(leftDirectoryPanel);
             leftDirectoryPanel.GetFoldersFiles(@"C:\");
-         
-            rightDirectoryPanel.Dock = DockStyle.Fill;
-            rightDirectoryPanel.BorderStyle = BorderStyle.FixedSingle;
+
             splitContainer.Panel2.Controls.Add(rightDirectoryPanel);
             rightDirectoryPanel.GetFoldersFiles(@"D:\");
+
+            //leftDirectoryPanel.Focus();
+            //leftDirectoryPanel.Select();
+
         }
 
         // Exit

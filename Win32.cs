@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
+
 namespace Commander
 {
     [StructLayout(LayoutKind.Sequential)]
@@ -18,9 +19,10 @@ namespace Commander
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
         public string szTypeName;
     }
-    
+
     class Win32
     {
+        // icon
         public const uint SHGFI_ICON = 0x100;
         //public const uint SHGFI_LARGEICON = 0x0; // 'Large icon
         public const uint SHGFI_SMALLICON = 0x1; // 'Small icon
