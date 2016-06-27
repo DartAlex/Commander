@@ -282,6 +282,10 @@ namespace Commander
                 listViewDirectory.Items.Add(listItem);
             }
 
+            /*listViewDirectory.Select();
+            listViewDirectory.Items[0].Focused = true;
+            listViewDirectory.Items[0].Selected = true;*/
+
             // Tread add icon
             Thread iconFileThread = new Thread(SetIcon);
             iconFileThread.Start();

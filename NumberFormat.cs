@@ -17,7 +17,7 @@ namespace Commander
             while ((intenger = value / 1000) != 0)
             {
                 fractional = value % 1000;
-                result = " " + fractional.ToString() + result;
+                result = " " + fractional.ToString().PadLeft(3, '0') + result;
                 value = Convert.ToInt32(intenger);
             }
 

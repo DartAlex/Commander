@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 
-
 namespace Commander
 {
     class CustomListView : ListView
@@ -16,13 +15,36 @@ namespace Commander
             this.OwnerDraw = true;
             this.FullRowSelect = true;
             this.HideSelection = true;
+            // without flicker
+            this.DoubleBuffered = true;
             this.View = View.Details;
             this.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
         }
 
+        // for always selected
+        protected override void WndProc(ref Message m)
+        {
+            // Swallow mouse messages that are not in the client area
+            if (m.Msg >= 0x201 && m.Msg <= 0x209)
+            {
+                Point pos = new Point(m.LParam.ToInt32() & 0xffff, m.LParam.ToInt32() >> 16);
+                var hit = this.HitTest(pos);
+                switch (hit.Location)
+                {
+                    case ListViewHitTestLocations.AboveClientArea:
+                    case ListViewHitTestLocations.BelowClientArea:
+                    case ListViewHitTestLocations.LeftOfClientArea:
+                    case ListViewHitTestLocations.RightOfClientArea:
+                    case ListViewHitTestLocations.None:
+                        return;
+                }
+            }
+            base.WndProc(ref m);
+        }
+
         protected override void OnDrawItem(DrawListViewItemEventArgs e)
         {
-            if (/*!this.Focused &&*/ !e.Item.Selected)
+            if (!this.Focused && !e.Item.Selected)
             {
                 e.DrawDefault = true;
             }
@@ -35,7 +57,7 @@ namespace Commander
 
         protected override void OnDrawSubItem(DrawListViewSubItemEventArgs e)
         {
-            if (e.Item.Selected /*&& this.Focused*/)
+            if (e.Item.Selected && this.Focused)
             {
                 Rectangle rec;
                 if (e.ColumnIndex == 0)
@@ -51,7 +73,6 @@ namespace Commander
                     else
                     {
                         rec = new Rectangle(e.Bounds.X + 2, e.Bounds.Y + 2, e.Bounds.Width - 4, e.Bounds.Height - 4);
-
                     }                   
                 }                          
 
@@ -79,19 +100,20 @@ namespace Commander
                 {
                     e.Graphics.DrawImage(this.SmallImageList.Images[e.ItemIndex], new Point(e.Bounds.Left + 4, e.Bounds.Top));
 
-                    int width = this.Columns[0].Width + this.Columns[1].Width + this.Columns[2].Width + this.Columns[3].Width;
-                    /*int width = 0;
-                    for (int i = 0; i >= 2; i++)
+                    int width = 0;
+                    for (int i = 0; i < this.Columns.Count; i++)
                     {
                         width = width + this.Columns[i].Width;
-                    }*/
+                    }
 
                     rec = new Rectangle(e.Bounds.X, e.Bounds.Y, width, e.Bounds.Height);
                     rec.Inflate(-1, -1);
                     using (Pen pen = new Pen(Color.Red, 1.5f))
-                        e.Graphics.DrawRectangle(pen, rec); 
-                }
-                
+                    {
+                        e.Graphics.DrawRectangle(pen, rec);
+                    }
+                         
+                }               
             }
             else
             {
