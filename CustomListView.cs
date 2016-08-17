@@ -53,16 +53,16 @@ namespace Commander
         protected override void OnDrawColumnHeader(DrawListViewColumnHeaderEventArgs e)
         {
             e.DrawDefault = true;
-        }
+        }      
 
         protected override void OnDrawSubItem(DrawListViewSubItemEventArgs e)
         {
             if (e.Item.Selected && this.Focused)
-            {
+            {                             
                 Rectangle rec;
                 if (e.ColumnIndex == 0)
                 {
-                    rec = new Rectangle(e.Bounds.X + 19, e.Bounds.Y + 2, e.Bounds.Width - 4, e.Bounds.Height - 4);
+                    rec = new Rectangle(e.Bounds.X + 19, e.Bounds.Y + 2, e.Bounds.Width - 16, e.Bounds.Height - 4);
                 }
                 else
                 {
@@ -73,8 +73,8 @@ namespace Commander
                     else
                     {
                         rec = new Rectangle(e.Bounds.X + 2, e.Bounds.Y + 2, e.Bounds.Width - 4, e.Bounds.Height - 4);
-                    }                   
-                }                          
+                    }
+                }
 
                 //TODO  Confirm combination of TextFormatFlags.EndEllipsis and TextFormatFlags.ExpandTabs works on all systems.  MSDN claims they're exclusive but on Win7-64 they work.
                 TextFormatFlags align;
@@ -106,13 +106,12 @@ namespace Commander
                         width = width + this.Columns[i].Width;
                     }
 
-                    rec = new Rectangle(e.Bounds.X, e.Bounds.Y, width, e.Bounds.Height);
+                    rec = new Rectangle(e.Bounds.X, e.Bounds.Y-1, width, e.Bounds.Height);
                     rec.Inflate(-1, -1);
                     using (Pen pen = new Pen(Color.Red, 1.5f))
                     {
                         e.Graphics.DrawRectangle(pen, rec);
-                    }
-                         
+                    }                        
                 }               
             }
             else

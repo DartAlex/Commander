@@ -51,8 +51,11 @@ namespace Commander
             {
                 leftDirectoryPanel.GetFoldersFiles(listCurentDirectory[index].Directory);
             }
+
+            LeftPanelFocus();
             
         }
+
         // Переход на диск правая панель
         public void SendToRightPanel(string value)
         {
@@ -65,6 +68,18 @@ namespace Commander
             {
                 rightDirectoryPanel.GetFoldersFiles(listCurentDirectory[index].Directory);
             }
+
+            RightPanelFocus();
+        }
+
+        public void RightPanelFocus()
+        {
+            rightDirectoryPanel.SetFocus();
+        }
+
+        public void LeftPanelFocus()
+        {
+            leftDirectoryPanel.SetFocus();
         }
 
         private void FormMain_Load(object sender, EventArgs e)
@@ -74,14 +89,14 @@ namespace Commander
             buttonContainer.IsSplitterFixed = true;
           
             splitContainer.Panel1.Controls.Add(leftDirectoryPanel);
+            leftDirectoryPanel.Tag = "left";
             leftDirectoryPanel.GetFoldersFiles(@"C:\");
 
             splitContainer.Panel2.Controls.Add(rightDirectoryPanel);
+            rightDirectoryPanel.Tag = "right";
             rightDirectoryPanel.GetFoldersFiles(@"D:\");
 
-            //leftDirectoryPanel.Focus();
-            //leftDirectoryPanel.Select();
-
+            LeftPanelFocus();
         }
 
         // Exit

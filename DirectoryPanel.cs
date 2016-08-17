@@ -124,7 +124,6 @@ namespace Commander
             listViewDirectory.Columns.Add("Размер", 100, HorizontalAlignment.Right);
             listViewDirectory.Columns.Add("Дата", 120, HorizontalAlignment.Left);
 
-
             listViewDirectory.TabIndex = 1;
             this.Controls.Add(listViewDirectory);          
 
@@ -267,6 +266,9 @@ namespace Commander
                 return;
             }
 
+            // Save current directory
+            FormMain.EventSend.SendCurrrentDirectory(rootDir, currentDir);
+
             // Set current dir label
             labelDir.Text = currentDir;
 
@@ -282,9 +284,8 @@ namespace Commander
                 listViewDirectory.Items.Add(listItem);
             }
 
-            /*listViewDirectory.Select();
-            listViewDirectory.Items[0].Focused = true;
-            listViewDirectory.Items[0].Selected = true;*/
+            // select
+            listViewDirectory.Items[0].Selected = true;
 
             // Tread add icon
             Thread iconFileThread = new Thread(SetIcon);
@@ -297,7 +298,6 @@ namespace Commander
             // Tread InfoFolder
             Thread folderInfoThread = new Thread(GetFolderInfo);
             folderInfoThread.Start();
-
         }
 
         // Add icon
@@ -396,5 +396,45 @@ namespace Commander
         }
 
         // Focus
+        public void SetFocus()
+        {           
+            listViewDirectory.Select();
+            listViewDirectory.Items[selectionIndex].Selected = true;
+        }
+
+        // Key Tab press
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            bool baseResult = true;
+
+            switch (keyData)
+            {
+                case Keys.Tab:
+                    if (this.Tag.ToString() == "left")
+                    {
+                        FormMain.EventSend.RightPanelFocus();
+                    }
+                    else
+                    {
+                        FormMain.EventSend.LeftPanelFocus();
+                    }
+                    break;
+  
+                case Keys.Enter:
+                    OpenSelected(selectionIndex);
+                    break;
+
+                case Keys.Back:
+                    //OpenSelected(0);
+                    MessageBox.Show(directoryList[selectionIndex].directory);
+                    break;
+            
+                default:                   
+                    baseResult = base.ProcessCmdKey(ref msg, keyData);
+                    break;
+            }
+            
+            return baseResult;   
+        }
     }
 }
