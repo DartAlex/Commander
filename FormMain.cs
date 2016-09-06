@@ -90,7 +90,8 @@ namespace Commander
           
             splitContainer.Panel1.Controls.Add(leftDirectoryPanel);
             leftDirectoryPanel.Tag = "left";
-            leftDirectoryPanel.GetFoldersFiles(@"C:\");
+            //leftDirectoryPanel.GetFoldersFiles(@"C:\");
+            leftDirectoryPanel.GetFoldersFiles(@"c:\Windows\Fonts\");
 
             splitContainer.Panel2.Controls.Add(rightDirectoryPanel);
             rightDirectoryPanel.Tag = "right";

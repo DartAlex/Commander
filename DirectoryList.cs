@@ -16,7 +16,8 @@ namespace Commander
         public string name { get; set; }
         public string type { get; set; }
         public string size { get; set; }
-        public DateTime date { get; set; }
+        //public DateTime date { get; set; }
+        public string date { get; set; }
         public FileAttributes atrributes { get; set; }
         // Archive - Файл выбран для резервного копирования или удаления.
 

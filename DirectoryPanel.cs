@@ -26,8 +26,8 @@ namespace Commander
         Panel panelDir = new Panel();
         Panel panelInfoFolder = new Panel();
         CustomListView listViewDirectory = new CustomListView();     
-        List<DirectoryList> directoryList = new List<DirectoryList>();
-        List<DirectoryList> tempDirectoryList = new List<DirectoryList>();
+        //List<DirectoryList> directoryList = new List<DirectoryList>();
+        //List<DirectoryList> tempDirectoryList = new List<DirectoryList>();
         Icon iconUp = Properties.Resources.IconUP;
         Icon IconUnknown = Properties.Resources.IconUnknown;   
 
@@ -172,9 +172,9 @@ namespace Commander
         }
 
         // Open selected item ListView
-        private void OpenSelected(int Index)
+        private void OpenSelected(int index)
         {
-            if (!directoryList[selectionIndex].atrributes.ToString().Contains("Directory"))
+            /*if (!directoryList[selectionIndex].atrributes.ToString().Contains("Directory"))
             {
                 if (directoryList[selectionIndex].type != "")
                 {
@@ -188,10 +188,103 @@ namespace Commander
             else
             {
                 GetFoldersFiles(directoryList[selectionIndex].directory + "\\");              
+            }*/
+
+            if (listViewDirectory.Items[index].Tag.ToString().Contains(("Directory")))
+            {
+                GetFoldersFiles(listViewDirectory.Items[index].Name.ToString() + "\\");
             }
+            else
+            {
+                MessageBox.Show(listViewDirectory.Items[index].Name.ToString() + " " +listViewDirectory.Items[index].Tag.ToString());
+            }         
         }
 
         public void GetFoldersFiles(string directory)
+        {
+
+            List<DirectoryList> directoryList = new List<DirectoryList>();
+            DirectoryInfo thisDirectory = new DirectoryInfo(directory);
+
+            // if root
+            rootDir = thisDirectory.Root.ToString();
+            currentDir = thisDirectory.FullName.ToString();
+
+            if (rootDir != currentDir)
+            {
+                string dirFolder = Directory.GetParent(Directory.GetParent(directory).ToString()).ToString();
+                DateTime dateFolder = Directory.GetCreationTime(dirFolder);
+
+                directoryList.Add(new DirectoryList()
+                {
+                    icon = iconUp,
+                    directory = dirFolder,
+                    name = "[..]",
+                    type = "",
+                    size = "",
+                    atrributes = thisDirectory.Attributes
+                });
+            }
+
+            try
+            {
+                // Get folders
+                DirectoryInfo[] folders = thisDirectory.GetDirectories();
+                foreach (DirectoryInfo folder in folders)
+                {
+                    directoryList.Add(new DirectoryList()
+                    {
+                        icon = IconUnknown,
+                        directory = folder.FullName,
+                        name = "[" + folder.Name + "]",
+                        type = "",
+                        size = "<папка>",
+                        //date = Directory.GetCreationTime(dirFolder),
+                        atrributes = folder.Attributes
+                    });
+                }
+
+                // Get folders
+                FileInfo[] files = thisDirectory.GetFiles();
+                foreach (FileInfo file in files)
+                {
+                    directoryList.Add(new DirectoryList()
+                    {
+                        icon = IconUnknown,
+                        directory = file.FullName,
+                        name = file.Name,
+                        type = file.Extension,
+                        size = NumberFormat.DigitNumber(file.Length),
+                        date = File.GetCreationTime(file.FullName).ToString(),
+                        atrributes = file.Attributes
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+                return;
+            }
+
+            listViewDirectory.Items.Clear();
+
+            foreach (DirectoryList lineDirectoryList in directoryList)
+            {
+                string[] item = { lineDirectoryList.name, lineDirectoryList.type, lineDirectoryList.size, lineDirectoryList.date };
+                ListViewItem listItem = new ListViewItem(item);
+                listItem.Name = lineDirectoryList.directory;
+                listItem.Tag = lineDirectoryList.atrributes;
+                listViewDirectory.Items.Add(listItem);
+            }
+
+            SetIcon(directoryList);
+
+            // select
+            listViewDirectory.Items[0].Selected = true;
+            listViewDirectory.Items[0].Focused = true;
+        }
+
+        /*public void GetFoldersFiles(string directory)
         {
             tempDirectoryList.Clear();
             
@@ -208,7 +301,7 @@ namespace Commander
 
                 tempDirectoryList.Add(new DirectoryList()
                 {
-                    icon = /*iconFolder*/ iconUp,
+                    icon = iconUp,
                     directory = dirFolder,
                     name = "[..]",
                     type = "",
@@ -299,7 +392,7 @@ namespace Commander
             // Tread InfoFolder
             Thread folderInfoThread = new Thread(GetFolderInfo);
             folderInfoThread.Start();
-        }
+        }*/
 
         // Add icon
         public void AddIconListViewDirectory(ImageList value)
@@ -316,7 +409,7 @@ namespace Commander
             }
         }
         // Tread
-        private void SetIcon()
+        private void SetIcon(List<DirectoryList> directoryList)
         {
             ImageList iconList = new ImageList();
             iconList.ColorDepth = ColorDepth.Depth32Bit;
@@ -399,12 +492,12 @@ namespace Commander
         // Focus
         public void SetFocus()
         {           
-            listViewDirectory.Select();
-            listViewDirectory.Items[selectionIndex].Selected = true;
+            //listViewDirectory.Select();
+            //listViewDirectory.Items[selectionIndex].Selected = true;
         }
 
         // Key Tab press
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        /*protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             bool baseResult = true;
 
@@ -436,6 +529,6 @@ namespace Commander
             }
             
             return baseResult;   
-        }
+        }*/
     }
 }
