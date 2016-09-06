@@ -44,10 +44,11 @@ namespace Commander
 
         protected override void OnDrawItem(DrawListViewItemEventArgs e)
         {
-            if (!this.Focused && !e.Item.Selected)
+            /*if (!this.Focused && !e.Item.Selected)
             {
                 e.DrawDefault = true;
-            }
+            }*/
+            e.DrawDefault = false;
         }
 
         protected override void OnDrawColumnHeader(DrawListViewColumnHeaderEventArgs e)
@@ -62,7 +63,7 @@ namespace Commander
                 Rectangle rec;
                 if (e.ColumnIndex == 0)
                 {
-                    rec = new Rectangle(e.Bounds.X + 19, e.Bounds.Y + 2, e.Bounds.Width - 16, e.Bounds.Height - 4);
+                    rec = new Rectangle(e.Bounds.X + 19, e.Bounds.Y + 2, e.Bounds.Width - 17, e.Bounds.Height - 4);
                 }
                 else
                 {
@@ -75,6 +76,7 @@ namespace Commander
                         rec = new Rectangle(e.Bounds.X + 2, e.Bounds.Y + 2, e.Bounds.Width - 4, e.Bounds.Height - 4);
                     }
                 }
+
 
                 //TODO  Confirm combination of TextFormatFlags.EndEllipsis and TextFormatFlags.ExpandTabs works on all systems.  MSDN claims they're exclusive but on Win7-64 they work.
                 TextFormatFlags align;
@@ -96,6 +98,7 @@ namespace Commander
                 //If a different tabstop than the default is needed, will have to p/invoke DrawTextEx from win32.
                 TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.Item.ListView.Font, rec, e.SubItem.ForeColor, flags);
 
+
                 if (e.ColumnIndex == 0)
                 {
                     e.Graphics.DrawImage(this.SmallImageList.Images[e.ItemIndex], new Point(e.Bounds.Left + 4, e.Bounds.Top));
@@ -112,7 +115,7 @@ namespace Commander
                     {
                         e.Graphics.DrawRectangle(pen, rec);
                     }                        
-                }               
+                }              
             }
             else
             {

@@ -187,7 +187,7 @@ namespace Commander
             }
             else
             {
-                GetFoldersFiles(directoryList[selectionIndex].directory + "\\");
+                GetFoldersFiles(directoryList[selectionIndex].directory + "\\");              
             }
         }
 
@@ -286,6 +286,7 @@ namespace Commander
 
             // select
             listViewDirectory.Items[0].Selected = true;
+            listViewDirectory.Items[0].Focused = true;
 
             // Tread add icon
             Thread iconFileThread = new Thread(SetIcon);
