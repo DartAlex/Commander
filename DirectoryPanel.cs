@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace Commander
 {
@@ -26,10 +27,8 @@ namespace Commander
         Panel panelDir = new Panel();
         Panel panelInfoFolder = new Panel();
         CustomListView listViewDirectory = new CustomListView();     
-        //List<DirectoryList> directoryList = new List<DirectoryList>();
-        //List<DirectoryList> tempDirectoryList = new List<DirectoryList>();
         Icon iconUp = Properties.Resources.IconUP;
-        Icon IconUnknown = Properties.Resources.IconUnknown;   
+        Icon IconUnknown = Properties.Resources.IconUnknown;
 
         int selectionIndex;
         string dateTimeFormat = "dd.MM.yyyy HH:mm:ss";
@@ -174,22 +173,6 @@ namespace Commander
         // Open selected item ListView
         private void OpenSelected(int index)
         {
-            /*if (!directoryList[selectionIndex].atrributes.ToString().Contains("Directory"))
-            {
-                if (directoryList[selectionIndex].type != "")
-                {
-                    MessageBox.Show("file " + directoryList[selectionIndex].name + "." + directoryList[selectionIndex].type + Environment.NewLine + directoryList[selectionIndex].atrributes.ToString());
-                }
-                else
-                {
-                    MessageBox.Show("file " + directoryList[selectionIndex].name + Environment.NewLine + directoryList[selectionIndex].atrributes.ToString());
-                }              
-            }
-            else
-            {
-                GetFoldersFiles(directoryList[selectionIndex].directory + "\\");              
-            }*/
-
             if (listViewDirectory.Items[index].Tag.ToString().Contains(("Directory")))
             {
                 GetFoldersFiles(listViewDirectory.Items[index].Name.ToString() + "\\");
@@ -202,6 +185,8 @@ namespace Commander
 
         public void GetFoldersFiles(string directory)
         {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
 
             List<DirectoryList> directoryList = new List<DirectoryList>();
             DirectoryInfo thisDirectory = new DirectoryInfo(directory);
@@ -234,15 +219,17 @@ namespace Commander
                 {
                     directoryList.Add(new DirectoryList()
                     {
-                        icon = IconUnknown,
+                        //icon = IconUnknown,
+                        //icon = GetIcon(folder.FullName),
                         directory = folder.FullName,
                         name = "[" + folder.Name + "]",
                         type = "",
                         size = "<папка>",
-                        //date = Directory.GetCreationTime(dirFolder),
+                        date = Directory.GetCreationTime(folder.FullName).ToString(dateTimeFormat),
                         atrributes = folder.Attributes
                     });
                 }
+                
 
                 // Get folders
                 FileInfo[] files = thisDirectory.GetFiles();
@@ -250,15 +237,17 @@ namespace Commander
                 {
                     directoryList.Add(new DirectoryList()
                     {
-                        icon = IconUnknown,
+                        //icon = IconUnknown,
+                        //icon = GetIcon(file.FullName),
                         directory = file.FullName,
                         name = file.Name,
                         type = file.Extension,
                         size = NumberFormat.DigitNumber(file.Length),
-                        date = File.GetCreationTime(file.FullName).ToString(),
+                        date = File.GetCreationTime(file.FullName).ToString(dateTimeFormat),
                         atrributes = file.Attributes
                     });
                 }
+                
             }
             catch (Exception e)
             {
@@ -266,22 +255,46 @@ namespace Commander
                 return;
             }
 
-            listViewDirectory.Items.Clear();
+            ImageList iconList = new ImageList();
+            iconList.ColorDepth = ColorDepth.Depth32Bit;
+            iconList.Images.Add(IconUnknown);
+            listViewDirectory.SmallImageList = iconList;
 
+            listViewDirectory.Items.Clear();
+            listViewDirectory.BeginUpdate();
+
+            //int count = 0;
             foreach (DirectoryList lineDirectoryList in directoryList)
             {
                 string[] item = { lineDirectoryList.name, lineDirectoryList.type, lineDirectoryList.size, lineDirectoryList.date };
                 ListViewItem listItem = new ListViewItem(item);
                 listItem.Name = lineDirectoryList.directory;
-                listItem.Tag = lineDirectoryList.atrributes;
+                listItem.Tag = lineDirectoryList.atrributes.ToString();
+                listItem.ImageIndex = 0;
+                //count++;
                 listViewDirectory.Items.Add(listItem);
             }
 
-            SetIcon(directoryList);
+            listViewDirectory.EndUpdate();
+
+            //SetIcon(directoryList);
 
             // select
             listViewDirectory.Items[0].Selected = true;
             listViewDirectory.Items[0].Focused = true;
+
+            // Tread DriveInfo
+            Thread dirveInfoThread = new Thread(GetDriveInfo);
+            dirveInfoThread.Start();
+
+            // Tread InfoFolder
+            Thread folderInfoThread = new Thread(GetFolderInfo);
+            folderInfoThread.Start();
+
+            stopWatch.Stop();
+            TimeSpan ts = stopWatch.Elapsed;
+            labelDir.Text = ts.Milliseconds.ToString();
+
         }
 
         /*public void GetFoldersFiles(string directory)
@@ -415,7 +428,8 @@ namespace Commander
             iconList.ColorDepth = ColorDepth.Depth32Bit;
             foreach (DirectoryList lineDirectoryList in directoryList)
             {
-                iconList.Images.Add(lineDirectoryList.icon);
+                //iconList.Images.Add(lineDirectoryList.icon);
+                iconList.Images.Add(IconUnknown);
             }
             AddIconListViewDirectory(iconList);
         }
@@ -492,12 +506,12 @@ namespace Commander
         // Focus
         public void SetFocus()
         {           
-            //listViewDirectory.Select();
-            //listViewDirectory.Items[selectionIndex].Selected = true;
+            listViewDirectory.Select();
+            listViewDirectory.Items[selectionIndex].Selected = true;
         }
 
         // Key Tab press
-        /*protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             bool baseResult = true;
 
@@ -520,7 +534,7 @@ namespace Commander
 
                 case Keys.Back:
                     //OpenSelected(0);
-                    MessageBox.Show(directoryList[selectionIndex].directory);
+                    //MessageBox.Show(directoryList[selectionIndex].directory);
                     break;
             
                 default:                   
@@ -529,6 +543,6 @@ namespace Commander
             }
             
             return baseResult;   
-        }*/
+        }
     }
 }
