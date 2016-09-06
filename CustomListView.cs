@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace Commander
 {
@@ -21,9 +22,19 @@ namespace Commander
             this.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
         }
 
-        // for always selected
+        private bool isInWmPaintMsg=false;
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct NMHDR
+        {
+            public IntPtr hwndFrom;
+            public IntPtr idFrom;
+            public int code;
+        }
+       
         protected override void WndProc(ref Message m)
         {
+            // For always selected
             // Swallow mouse messages that are not in the client area
             if (m.Msg >= 0x201 && m.Msg <= 0x209)
             {
@@ -39,15 +50,40 @@ namespace Commander
                         return;
                 }
             }
-            base.WndProc(ref m);
+
+            // Flickering text in listview
+            switch (m.Msg)
+            {
+                case 0x0F: // WM_PAINT
+                    this.isInWmPaintMsg = true;
+                    base.WndProc(ref m);
+                    this.isInWmPaintMsg = false;
+                    break;
+
+                case 0x204E: // WM_REFLECT_NOTIFY
+                    NMHDR nmhdr = (NMHDR)m.GetLParam(typeof(NMHDR));
+                    if (nmhdr.code == -12)
+                    // NM_CUSTOMDRAW
+                    { 
+                        if (this.isInWmPaintMsg)
+                        {
+                            base.WndProc(ref m);
+                        }                     
+                    }
+                    else
+                    {
+                        base.WndProc(ref m);
+                    }                       
+                    break;
+
+                default:
+                    base.WndProc(ref m);
+                    break;
+            }
         }
 
         protected override void OnDrawItem(DrawListViewItemEventArgs e)
         {
-            /*if (!this.Focused && !e.Item.Selected)
-            {
-                e.DrawDefault = true;
-            }*/
             e.DrawDefault = false;
         }
 
@@ -59,7 +95,7 @@ namespace Commander
         protected override void OnDrawSubItem(DrawListViewSubItemEventArgs e)
         {
             if (e.Item.Selected && this.Focused)
-            {                             
+            {               
                 Rectangle rec;
                 if (e.ColumnIndex == 0)
                 {
@@ -78,7 +114,7 @@ namespace Commander
                 }
 
 
-                //TODO  Confirm combination of TextFormatFlags.EndEllipsis and TextFormatFlags.ExpandTabs works on all systems.  MSDN claims they're exclusive but on Win7-64 they work.
+                //TODO  Confirm combination of TextFormatFlags.EndEllipsis and TextFormatFlags.ExpandTabs works on all systems.  MSDN claims they're exclusive but on Win7-64 they work.               
                 TextFormatFlags align;
                 switch (this.Columns[e.ColumnIndex].TextAlign)
                 {
@@ -95,9 +131,8 @@ namespace Commander
 
                 TextFormatFlags flags = align | TextFormatFlags.EndEllipsis | TextFormatFlags.ExpandTabs | TextFormatFlags.SingleLine;
 
-                //If a different tabstop than the default is needed, will have to p/invoke DrawTextEx from win32.
+                //If a different tabstop than the default is needed, will have to p/invoke DrawTextEx from win32.               
                 TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.Item.ListView.Font, rec, e.SubItem.ForeColor, flags);
-
 
                 if (e.ColumnIndex == 0)
                 {
@@ -114,7 +149,7 @@ namespace Commander
                     using (Pen pen = new Pen(Color.Red, 1.5f))
                     {
                         e.Graphics.DrawRectangle(pen, rec);
-                    }                        
+                    }                       
                 }              
             }
             else
