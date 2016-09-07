@@ -28,8 +28,10 @@ namespace Commander
         Panel panelInfoFolder = new Panel();
         CustomListView listViewDirectory = new CustomListView();     
         Icon iconUp = Properties.Resources.IconUP;
-        Icon IconUnknown = Properties.Resources.IconUnknown;
+        Icon iconUnknown = Properties.Resources.IconUnknown;
+        Icon iconFolder;
 
+        volatile List<DirectoryList> directoryListVolatile = new List<DirectoryList>();
         int selectionIndex;
         string dateTimeFormat = "dd.MM.yyyy HH:mm:ss";
         string rootDir;
@@ -138,6 +140,8 @@ namespace Commander
             labelInfoFolder.Text = "Info folder";
             
             this.panelInfoFolder.Controls.Add(labelInfoFolder);
+
+            iconFolder = GetIcon(@"C:\windows\");
         }
 
         private void ListViewDirectory_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -160,13 +164,14 @@ namespace Commander
             iconSmall = Win32.SHGetFileInfo(filePatch, 0, ref shinfo, /*(uint)Marshal.SizeOf(shinfo)*/ 80, Win32.SHGFI_ICON | Win32.SHGFI_SMALLICON);
             if (iconSmall == IntPtr.Zero)
             {
-                icon = IconUnknown;
+                icon = iconUnknown;
                 //throw (new System.IO.FileNotFoundException());               
             }
             else
             {
-                icon = Icon.FromHandle(shinfo.hIcon);
+                icon = Icon.FromHandle(shinfo.hIcon);                                         
             }
+
             return (icon);
         }
 
@@ -202,7 +207,7 @@ namespace Commander
 
                 directoryList.Add(new DirectoryList()
                 {
-                    icon = iconUp,
+                    tag = "up",
                     directory = dirFolder,
                     name = "[..]",
                     type = "",
@@ -219,8 +224,7 @@ namespace Commander
                 {
                     directoryList.Add(new DirectoryList()
                     {
-                        //icon = IconUnknown,
-                        //icon = GetIcon(folder.FullName),
+                        tag = "folder",
                         directory = folder.FullName,
                         name = "[" + folder.Name + "]",
                         type = "",
@@ -231,17 +235,26 @@ namespace Commander
                 }
                 
 
-                // Get folders
+                // Get files
                 FileInfo[] files = thisDirectory.GetFiles();
                 foreach (FileInfo file in files)
                 {
+                    string ext = "";
+                    try
+                    {
+                        if (file.Extension.Length > 0)
+                        {
+                            ext = file.Extension.Split('.')[1];
+                        }                           
+                    }
+                    catch { }
+
                     directoryList.Add(new DirectoryList()
                     {
-                        //icon = IconUnknown,
-                        //icon = GetIcon(file.FullName),
+                        tag = "file",
                         directory = file.FullName,
-                        name = file.Name,
-                        type = file.Extension,
+                        name = Path.GetFileNameWithoutExtension(file.FullName),
+                        type = " " + ext,
                         size = NumberFormat.DigitNumber(file.Length),
                         date = File.GetCreationTime(file.FullName).ToString(dateTimeFormat),
                         atrributes = file.Attributes
@@ -257,31 +270,57 @@ namespace Commander
 
             ImageList iconList = new ImageList();
             iconList.ColorDepth = ColorDepth.Depth32Bit;
-            iconList.Images.Add(IconUnknown);
-            listViewDirectory.SmallImageList = iconList;
+            iconList.Images.Add(iconUp);
+            iconList.Images.Add(iconFolder);
+            iconList.Images.Add(iconUnknown);
 
+            listViewDirectory.SmallImageList = iconList;
             listViewDirectory.Items.Clear();
+
             listViewDirectory.BeginUpdate();
 
-            //int count = 0;
             foreach (DirectoryList lineDirectoryList in directoryList)
             {
                 string[] item = { lineDirectoryList.name, lineDirectoryList.type, lineDirectoryList.size, lineDirectoryList.date };
                 ListViewItem listItem = new ListViewItem(item);
                 listItem.Name = lineDirectoryList.directory;
-                listItem.Tag = lineDirectoryList.atrributes.ToString();
-                listItem.ImageIndex = 0;
-                //count++;
+                //listItem.Tag = lineDirectoryList.atrributes.ToString();
+
+                switch ( lineDirectoryList.tag )
+                {
+                    case "up":
+                        listItem.ImageIndex = 0;
+                        listItem.Tag = "Directory Up";
+                        break;
+                    case "folder":
+                        listItem.ImageIndex = 1;
+                        listItem.Tag = lineDirectoryList.atrributes.ToString();
+                        break;
+                    default:
+                        listItem.ImageIndex = 2;
+                        listItem.Tag = lineDirectoryList.atrributes.ToString();
+                        break;
+                }
                 listViewDirectory.Items.Add(listItem);
             }
 
-            listViewDirectory.EndUpdate();
+            listViewDirectory.EndUpdate();           
 
             //SetIcon(directoryList);
+
+            // Set current dir label
+            //labelDir.Text = currentDir;
 
             // select
             listViewDirectory.Items[0].Selected = true;
             listViewDirectory.Items[0].Focused = true;
+
+            // Tread GetIcons
+            directoryListVolatile = directoryList;
+
+            Thread setIconTread = new Thread(SetIcon);
+            setIconTread.Start();
+            //SetIcon();
 
             // Tread DriveInfo
             Thread dirveInfoThread = new Thread(GetDriveInfo);
@@ -293,8 +332,42 @@ namespace Commander
 
             stopWatch.Stop();
             TimeSpan ts = stopWatch.Elapsed;
-            labelDir.Text = ts.Milliseconds.ToString();
+            labelDir.Text = ts.Milliseconds.ToString();        
+        }
 
+        // Add icon
+        public void AddIconListViewDirectory(ImageList value)
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action<ImageList>(AddIconListViewDirectory), new object[] { value });
+                return;
+            }
+            listViewDirectory.SmallImageList = value;
+            for (int count = 0; count < listViewDirectory.Items.Count; count++)
+            {
+                listViewDirectory.Items[count].ImageIndex = count;
+            }
+        }
+        // Thread add icon
+        private void SetIcon()
+        {
+            ImageList iconList = new ImageList();
+            iconList.ColorDepth = ColorDepth.Depth32Bit;
+            
+            foreach (DirectoryList lineDirectoryList in directoryListVolatile)
+            {
+                string patch = lineDirectoryList.directory;
+                if (lineDirectoryList.tag == "up")
+                {
+                    iconList.Images.Add(iconUp);
+                }
+                else
+                {
+                    iconList.Images.Add(GetIcon(patch));
+                }                                            
+            }
+            AddIconListViewDirectory(iconList);
         }
 
         /*public void GetFoldersFiles(string directory)
@@ -406,33 +479,18 @@ namespace Commander
             Thread folderInfoThread = new Thread(GetFolderInfo);
             folderInfoThread.Start();
         }*/
-
-        // Add icon
-        public void AddIconListViewDirectory(ImageList value)
+       
+        /*private void ThreadSetIcon()
         {
             if (InvokeRequired)
             {
-                this.Invoke(new Action<ImageList>(AddIconListViewDirectory), new object[] { value });
-                return;
+                BeginInvoke(new MethodInvoker(delegate { SetIcon(); }));
             }
-            listViewDirectory.SmallImageList = value;
-            for (int count = 0; count < listViewDirectory.Items.Count; count++)
+            else
             {
-                listViewDirectory.Items[count].ImageIndex = count;
+                SetIcon();
             }
-        }
-        // Tread
-        private void SetIcon(List<DirectoryList> directoryList)
-        {
-            ImageList iconList = new ImageList();
-            iconList.ColorDepth = ColorDepth.Depth32Bit;
-            foreach (DirectoryList lineDirectoryList in directoryList)
-            {
-                //iconList.Images.Add(lineDirectoryList.icon);
-                iconList.Images.Add(IconUnknown);
-            }
-            AddIconListViewDirectory(iconList);
-        }
+        }*/
 
         // Drive info to label
         public void DriveInfoToLabel(string value)

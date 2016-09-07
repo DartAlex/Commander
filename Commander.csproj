@@ -62,7 +62,6 @@
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
     <Compile Include="HeaderListView.cs" />
-    <Compile Include="ListViewItemAtrributes.cs" />
     <Compile Include="NumberFormat.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

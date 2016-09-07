@@ -136,11 +136,7 @@ namespace Commander
 
                 if (e.ColumnIndex == 0)
                 {
-                    if (this.SmallImageList.Images.Count > 0)
-                    {
-                        e.Graphics.DrawImage(this.SmallImageList.Images[e.ItemIndex], new Point(e.Bounds.Left + 4, e.Bounds.Top));
-                    }
-                    
+                    e.Graphics.DrawImage(this.SmallImageList.Images[e.Item.ImageIndex], new Point(e.Bounds.Left + 4, e.Bounds.Top));
 
                     int width = 0;
                     for (int i = 0; i < this.Columns.Count; i++)

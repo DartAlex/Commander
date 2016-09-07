@@ -11,7 +11,8 @@ namespace Commander
     class DirectoryList
     {
         //public bool isFile { get; set; }
-        public Icon icon { get; set; }
+        //public Icon icon { get; set; }
+        public string tag { get; set; }
         public string directory { get; set; }
         public string name { get; set; }
         public string type { get; set; }
