@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 namespace Commander
 {
     class CustomListView : ListView
-    {
+    {       
         public CustomListView()
         {
             this.OwnerDraw = true;
@@ -20,6 +20,7 @@ namespace Commander
             this.DoubleBuffered = true;
             this.View = View.Details;
             this.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
+            this.BackColor = Color.Black;
         }
 
         private bool isInWmPaintMsg=false;
@@ -54,10 +55,19 @@ namespace Commander
             // Flickering text in listview
             switch (m.Msg)
             {
-                case 0x0F: // WM_PAINT
+                case 0x0F: // WM_PAINTs
                     this.isInWmPaintMsg = true;
                     base.WndProc(ref m);
                     this.isInWmPaintMsg = false;
+
+                    // top index
+                    //if (nmhdr2.code == -181 && !this.TopItem.Equals(lastTopItem))
+                    if (!this.TopItem.Equals(lastTopItem))
+                    {
+                        OnTopItemChanged(EventArgs.Empty);
+                        lastTopItem = this.TopItem;
+                    }
+                    // -----------
                     break;
 
                 case 0x204E: // WM_REFLECT_NOTIFY
@@ -90,50 +100,57 @@ namespace Commander
         protected override void OnDrawColumnHeader(DrawListViewColumnHeaderEventArgs e)
         {
             e.DrawDefault = true;
-        }      
+        }
 
         protected override void OnDrawSubItem(DrawListViewSubItemEventArgs e)
         {
-            if (e.Item.Selected && this.Focused)
-            {               
-                Rectangle rec;
-                if (e.ColumnIndex == 0)
+            Rectangle rec;
+            if (e.ColumnIndex == 0)
+            {
+                rec = new Rectangle(e.Bounds.X + 19, e.Bounds.Y + 2, e.Bounds.Width - 17, e.Bounds.Height - 4);
+            }
+            else
+            {
+                if (this.Columns[e.ColumnIndex].TextAlign == HorizontalAlignment.Left)
                 {
-                    rec = new Rectangle(e.Bounds.X + 19, e.Bounds.Y + 2, e.Bounds.Width - 17, e.Bounds.Height - 4);
+                    rec = new Rectangle(e.Bounds.X + 3, e.Bounds.Y + 2, e.Bounds.Width - 4, e.Bounds.Height - 4);
                 }
                 else
                 {
-                    if (this.Columns[e.ColumnIndex].TextAlign == HorizontalAlignment.Left)
-                    {
-                        rec = new Rectangle(e.Bounds.X + 3, e.Bounds.Y + 2, e.Bounds.Width - 4, e.Bounds.Height - 4);
-                    }
-                    else
-                    {
-                        rec = new Rectangle(e.Bounds.X + 2, e.Bounds.Y + 2, e.Bounds.Width - 4, e.Bounds.Height - 4);
-                    }
+                    rec = new Rectangle(e.Bounds.X + 2, e.Bounds.Y + 2, e.Bounds.Width - 4, e.Bounds.Height - 4);
                 }
+            }
 
+            //TODO  Confirm combination of TextFormatFlags.EndEllipsis and TextFormatFlags.ExpandTabs works on all systems.  MSDN claims they're exclusive but on Win7-64 they work.               
+            TextFormatFlags align;
+            switch (this.Columns[e.ColumnIndex].TextAlign)
+            {
+                case HorizontalAlignment.Right:
+                    align = TextFormatFlags.Right;
+                    break;
+                case HorizontalAlignment.Center:
+                    align = TextFormatFlags.HorizontalCenter;
+                    break;
+                default:
+                    align = TextFormatFlags.Left;
+                    break;
+            }
 
-                //TODO  Confirm combination of TextFormatFlags.EndEllipsis and TextFormatFlags.ExpandTabs works on all systems.  MSDN claims they're exclusive but on Win7-64 they work.               
-                TextFormatFlags align;
-                switch (this.Columns[e.ColumnIndex].TextAlign)
-                {
-                    case HorizontalAlignment.Right:
-                        align = TextFormatFlags.Right;
-                        break;
-                    case HorizontalAlignment.Center:
-                        align = TextFormatFlags.HorizontalCenter;
-                        break;
-                    default:
-                        align = TextFormatFlags.Left;
-                        break;
-                }
+            TextFormatFlags flags = align | TextFormatFlags.EndEllipsis | TextFormatFlags.ExpandTabs | TextFormatFlags.SingleLine;
 
-                TextFormatFlags flags = align | TextFormatFlags.EndEllipsis | TextFormatFlags.ExpandTabs | TextFormatFlags.SingleLine;
+            //If a different tabstop than the default is needed, will have to p/invoke DrawTextEx from win32.               
+            using (Font font = new Font("Microsoft since self", 8, FontStyle.Bold))
+            {
+                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, font, rec, Color.FromArgb(0, 255, 0), flags);
+            }
 
-                //If a different tabstop than the default is needed, will have to p/invoke DrawTextEx from win32.               
-                TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.Item.ListView.Font, rec, e.SubItem.ForeColor, flags);
+            if (e.ColumnIndex == 0)
+            {
+                e.Graphics.DrawImage(this.SmallImageList.Images[e.Item.ImageIndex], new Point(e.Bounds.Left + 4, e.Bounds.Top));
+            }
 
+            if (e.Item.Selected && this.Focused)
+            {
                 if (e.ColumnIndex == 0)
                 {
                     e.Graphics.DrawImage(this.SmallImageList.Images[e.Item.ImageIndex], new Point(e.Bounds.Left + 4, e.Bounds.Top));
@@ -144,18 +161,25 @@ namespace Commander
                         width = width + this.Columns[i].Width;
                     }
 
-                    rec = new Rectangle(e.Bounds.X, e.Bounds.Y-1, width, e.Bounds.Height);
+                    rec = new Rectangle(e.Bounds.X, e.Bounds.Y - 1, width, e.Bounds.Height);
                     rec.Inflate(-1, -1);
                     using (Pen pen = new Pen(Color.Red, 1.5f))
                     {
                         e.Graphics.DrawRectangle(pen, rec);
-                    }                       
-                }              
+                    }
+                }
             }
-            else
-            {
-                e.DrawDefault = true;
-            }                      
         }
+
+        // top index
+        public event EventHandler TopItemChanged;
+
+        protected virtual void OnTopItemChanged(EventArgs e)
+        {
+            var handler = TopItemChanged;
+            if (handler != null) handler(this, e);
+        }
+
+        private ListViewItem lastTopItem = null;
     }
 }

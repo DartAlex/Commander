@@ -22,12 +22,16 @@ namespace Commander
 
     class Win32
     {
-        // icon
         public const uint SHGFI_ICON = 0x100;
         //public const uint SHGFI_LARGEICON = 0x0; // 'Large icon
         public const uint SHGFI_SMALLICON = 0x1; // 'Small icon
 
         [DllImport("shell32.dll")]
         public static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbSizeFileInfo, uint uFlags);
+        //[DllImport("gdi32.dll", SetLastError = true)]
+        //public static extern bool DeleteObject(IntPtr hObject);
+        [DllImport("user32.dll", SetLastError = true)]
+        //public static extern bool DestroyIcon(IntPtr hObject);
+        public static extern bool DestroyIcon(HandleRef hObject);
     }
 }
